@@ -1,5 +1,7 @@
 # laminas-mvc-skeleton
 
+![Alt text](data/screenshot.png?raw=true "Example")
+
 ## System requirements
 ```bash
 PHP 7.4

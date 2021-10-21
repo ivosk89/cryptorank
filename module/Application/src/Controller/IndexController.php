@@ -16,10 +16,9 @@ class IndexController extends AbstractActionController
 
     public function ajaxGetDataAction(): JsonModel
     {
-        $parser = new ParserService();
-        $viewModel = new JsonModel();
-        $viewModel->setVariable('data', $parser->request() ?? []);
-
-        return $viewModel;
+        return (new JsonModel())->setVariable(
+            'data',
+            (new ParserService())->request() ?? []
+        );
     }
 }
