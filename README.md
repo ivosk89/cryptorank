@@ -1,6 +1,6 @@
 # laminas-mvc-skeleton
 
-![Alt text](data/screenshot.png?raw=true "Example")
+![Alt text](data/page-screenshot.png?raw=true "Example")
 
 ## System requirements
 ```bash
