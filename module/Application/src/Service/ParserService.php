@@ -20,12 +20,14 @@ class ParserService
     public function request(): array
     {
         $topCoins = $this->getTopCoins();
-
         if (!empty($topCoins)) {
             foreach ($topCoins as $n => $coin) {
                 $topCoins[$n]['timestamp'] = (new \DateTime())->format('m.d.Y H:i:s');
                 if (!empty($coin['link'])) {
-                    $topCoins[$n]['tags'] = $this->getCoinTags($coin['link']);
+                    $topCoins[$n]['tags'] = [];
+                    if ($parseCoinPage = $this->seleniumGetCoinPage($coin['link'])) {
+                        $topCoins[$n]['tags'] = $this->getCoinTags($parseCoinPage);
+                    }
                 }
             }
         }
@@ -46,9 +48,10 @@ class ParserService
             }
 
             $trDom = pq($tr);
+            $name = $trDom->find('td:eq(1) > div:eq(0)');
             $topCoins[] = [
-                'name' => $trDom->find('td:eq(1) > div:eq(0)')->attr('title'),
-                'link' => $trDom->find('td:eq(1) > div:eq(0) > a:eq(0)')->attr('href')
+                'name' => $name->attr('title'),
+                'link' => $name->children('a:eq(0)')->attr('href')
             ];
         }
 
@@ -57,18 +60,16 @@ class ParserService
         return $topCoins;
     }
 
-    private function getCoinTags(string $url): array
+    private function seleniumGetCoinPage(string $url): string
     {
-        $parsedFile = 'data/parsed/' . str_replace('/', '', $url) . '.html';
-        exec('node ' . static::SELENIUM_SCRIPT .' '. static::BASE_URL . $url . ' > ' . $parsedFile);
-        if (
-            !is_file(getcwd() . DIRECTORY_SEPARATOR . $parsedFile) ||
-            !$html = file_get_contents(getcwd() . DIRECTORY_SEPARATOR . $parsedFile)
-        ) {
-            return [];
-        }
+        $parseCoinPage = shell_exec('node ' . static::SELENIUM_SCRIPT .' '. static::BASE_URL . $url);
 
-        $dom = \phpQuery::newDocument($html);
+        return $parseCoinPage ?? '';
+    }
+
+    private function getCoinTags(string $parseCoinPage): array
+    {
+        $dom = \phpQuery::newDocument($parseCoinPage);
         $tagsList = $dom->find('div[class*="ContainerCoinLabel-sc"]:eq(0)')
             ->children()
             ->text();
@@ -83,6 +84,8 @@ class ParserService
                 }
             }
         }
+
+        \phpQuery::unloadDocuments();
 
         return array_values(
             array_unique(

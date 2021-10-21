@@ -6,10 +6,7 @@ let url = process.argv.slice(2)[0];
 
 (async function() {
     const options = new chrome.Options();
-    options.addArguments(
-        'headless',
-        'disable-gpu',
-    );
+    options.addArguments('headless');
 
     let driver = new webdriver.Builder()
         .forBrowser('chrome')
@@ -18,19 +15,14 @@ let url = process.argv.slice(2)[0];
 
     try {
         driver.get(url);
-
-        let viewAllTags = driver.findElement(By.css("button[class*='view-all-tags-button'"));
-        try {
-            let viewAllTagsExists = await viewAllTags.getText();
-            viewAllTags.click();
-            driver.sleep(3000);
-        } catch (e) {
-          //
-        } finally {
-            console.log(await driver.getPageSource());
+        let viewAllLink = await driver.findElements(By.css("button[class*='view-all-tags-button__ViewAllTagsButton-sc'"));
+        if(viewAllLink.isDisplayed()){
+            viewAllLink.click();
         }
-    }
-    finally {
+    } catch {
+    } finally {
+        await driver.sleep(3000);
+        console.log(await driver.getPageSource());
         await driver.quit();
     }
 })();
