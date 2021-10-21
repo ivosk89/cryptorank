@@ -1,0 +1,23 @@
+<?php /** @var Laminas\View\Renderer\PhpRenderer $this */?>
+
+<div class="card">
+    <table class="table mb-5" id="records_table">
+        <thead>
+            <tr>
+                <th scope="col">Наименование</th>
+                <th scope="col">Теги</th>
+                <th scope="col">Timestamp</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <div id="loader" class="spinner-border text-success align-self-center" role="status" style="display: none">
+        <span class="sr-only">Loading...</span>
+    </div>
+
+    <a href="#" class="request_btn btn btn-danger mt-5">Запросить</a>
+</div>
+
+<?= $this->inlineScript()->prependFile($this->basePath('js/get-parsed-data.js')) ?>
+

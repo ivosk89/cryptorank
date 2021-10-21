@@ -1,0 +1,15 @@
+{
+  "name": "cryptorank",
+  "version": "1.0.0",
+  "dependencies": {
+    "chromedriver": "^94.0.0",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7",
+    "process": "^0.11.10",
+    "selenium-webdriver": "^3.6.0",
+    "system": "^2.0.1",
+    "url": "^0.11.0",
+    "util": "^0.12.4",
+    "webpage": "^0.3.0"
+  }
+}
